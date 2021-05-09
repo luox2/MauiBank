@@ -7,9 +7,9 @@ app = Flask(__name__)
 app.secret_key = '\xc9ixnRb\xe40\xd4\xa5\x7f\x03\xd0y6\x01\x1f\x96\xeao+\x8a\x9f\xe4'
 
 
-# TODO for MD5 CONVERSION
+# To check the password in database with input password after md5 conversion
 def check_password(hashed_password, user_password):
-    return hashed_password == user_password
+    return hashed_password == hashlib.md5(user_password.encode()).hexdigest()
 
 
 def valid_login(username, password):
@@ -68,7 +68,8 @@ def add_user(username, password, balance):
     con = sqlite3.connect('database/bank.db')
     with con:
         cur = con.cursor()
-        cur.execute("INSERT INTO USER (USERNAME, PASSWORD, BALANCE) VALUES (?, ?, ?)", (username, password, balance))
+        md5_password = hashlib.md5(password.encode()).hexdigest()
+        cur.execute("INSERT INTO USER (USERNAME, PASSWORD, BALANCE) VALUES (?, ?, ?)", (username, md5_password, balance))
         con.commit()
 
 
@@ -107,12 +108,11 @@ def register():
     if request.method == 'POST':
         if request.form['password1'] != request.form['password2']:
             error = 'the two passwords are not the same'
-        elif float(request.form['input_balance']) < 0.0:
-            error = 'the input balance cannot be negative'
+        elif request.form['input_balance'] == '' or float(request.form['input_balance']) < 0.0:
+            error = 'the input balance cannot be negative or null'
         elif valid_register(request.form['username']):
             add_user(request.form['username'], request.form['password1'], request.form['input_balance'])
-            # TODO
-            return redirect(url_for('hello'))
+            return redirect(url_for('login'))
         else:
             error = 'this username has been registered'
     return render_template('register.html', error=error)
