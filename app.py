@@ -27,6 +27,26 @@ def valid_login(username, password):
                 completion = check_password(db_pass, password)
     return completion
 
+
+def get_account_balance(username):
+    con = sqlite3.connect('database/bank.db')
+    with con:
+        cur = con.cursor()
+        print(username)
+        cur.execute("SELECT BALANCE FROM USER WHERE USERNAME = ?", (username,))
+        row = cur.fetchone()
+        print(row[0])
+        return row[0]
+
+def get_account_info(username):
+    con = sqlite3.connect('database/bank.db')
+    with con:
+        cur = con.cursor()
+        cur.execute("SELECT BALANCE FROM USER WHERE USERNAME = ?", username)
+        row = cur.fetchone()
+        return row[0]
+
+
 app.config['SECRET_KEY'] = 'maui bank'
 bootstrap = Bootstrap(app)
 
@@ -98,16 +118,26 @@ def register():
     return render_template('register.html', error=error)
 
 
-@app.route('/hello')
+@app.route('/hello', methods=['GET', 'POST'])
 def hello():
     # todo
     # show account information
+    name = session.get('username')
+    balance = 0
     if request.method == 'GET':
         # query data from db
-        return render_template("account.html", username=session.get('username'))
+        print(session)
+        balance = get_account_balance(name)
 
-    name = request.args.get("name", "World")
-    return f'Hello, {escape(name)}!'
+        return render_template("account.html", username=name, balance=balance)
+
+    if request.method == 'POST':
+        print(request)
+        operation = request.form['operation']
+        print(operation)
+
+
+
 
 
 if __name__ == '__main__':
