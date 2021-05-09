@@ -1,3 +1,4 @@
+from flask_bootstrap import Bootstrap
 from flask import Flask, escape, request, render_template, session, redirect, url_for
 import sqlite3
 import hashlib
@@ -26,10 +27,14 @@ def valid_login(username, password):
                 completion = check_password(db_pass, password)
     return completion
 
+app.config['SECRET_KEY'] = 'maui bank'
+bootstrap = Bootstrap(app)
+
 
 # the home page
 @app.route('/')
 def home():
+    print(session.get('username'))
     return render_template('home.html', username=session.get('username'))
 
 
@@ -49,6 +54,12 @@ def login():
 
 @app.route('/hello')
 def hello():
+    # todo
+    # show account information
+    if request.method == 'GET':
+        # query data from db
+        return render_template("account.html", username=session.get('username'))
+
     name = request.args.get("name", "World")
     return f'Hello, {escape(name)}!'
 
