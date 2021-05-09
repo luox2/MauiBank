@@ -82,12 +82,11 @@ def register():
     if request.method == 'POST':
         if request.form['password1'] != request.form['password2']:
             error = 'the two passwords are not the same'
-        elif float(request.form['input_balance']) < 0.0:
-            error = 'the input balance cannot be negative'
+        elif request.form['input_balance'] == '' or float(request.form['input_balance']) < 0.0:
+            error = 'the input balance cannot be negative or null'
         elif valid_register(request.form['username']):
             add_user(request.form['username'], request.form['password1'], request.form['input_balance'])
-            # TODO
-            return redirect(url_for('hello'))
+            return redirect(url_for('login'))
         else:
             error = 'this username has been registered'
     return render_template('register.html', error=error)
