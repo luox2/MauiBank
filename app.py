@@ -93,6 +93,7 @@ def register():
     return render_template('register.html', error=error)
 
 
+# method for test
 @app.route('/hello')
 def hello():
     name = request.args.get("name", "World")
