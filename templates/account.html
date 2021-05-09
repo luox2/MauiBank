@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <form action="/account" method="post">
+    <form action="/hello" method="post">
         <div class="form-group">
             <label for="id_username">Account</label>
             <input type="text" class="form-control" name="username" id="id_username" placeholder="Maui" {% if username
@@ -14,19 +14,21 @@
             <input type="text" class="form-control" name="balance" id="id_balance" placeholder="1000000" {% if balance
                    %}value="{{ balance }}" {% endif %} autofocus required readonly="readonly">
         </div>
-        <form action="">
+        <form method="post" action="/hello">
+            <div class="form-group">
             <select name="operation">
                 <option value="deposit">Deposit</option>
                 <option value="withdrawal">Withdrawal</option>
             </select>
-        </form>
-        <div class="form-group">
+            </div>
+            <div class="form-group">
             <label for="id_amount">Amount</label>
             <input type="text" class="form-control" name="amount" id="id_amount" placeholder="Input amount" required>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="btn btn-primary pull-left">submit</button>
-        </div>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary pull-left">submit</button>
+            </div>
+        </form>
     </form>
 </head>
 <body>

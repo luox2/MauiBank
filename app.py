@@ -38,6 +38,7 @@ def get_account_balance(username):
         print(row[0])
         return row[0]
 
+
 def get_account_info(username):
     con = sqlite3.connect('database/bank.db')
     with con:
@@ -69,7 +70,8 @@ def add_user(username, password, balance):
     with con:
         cur = con.cursor()
         md5_password = hashlib.md5(password.encode()).hexdigest()
-        cur.execute("INSERT INTO USER (USERNAME, PASSWORD, BALANCE) VALUES (?, ?, ?)", (username, md5_password, balance))
+        cur.execute("INSERT INTO USER (USERNAME, PASSWORD, BALANCE) VALUES (?, ?, ?)",
+                    (username, md5_password, balance))
         con.commit()
 
 
@@ -135,9 +137,7 @@ def hello():
         print(request)
         operation = request.form['operation']
         print(operation)
-
-
-
+        return redirect("/hello")
 
 
 if __name__ == '__main__':
