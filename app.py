@@ -1,5 +1,4 @@
-from flask_bootstrap import Bootstrap
-from flask import Flask, escape, request, render_template, session, redirect, url_for
+from flask import Flask, request, render_template, session, redirect, url_for
 import sqlite3
 import hashlib
 
@@ -49,7 +48,6 @@ def get_account_info(username):
 
 
 app.config['SECRET_KEY'] = 'maui bank'
-bootstrap = Bootstrap(app)
 
 
 def valid_register(username):
