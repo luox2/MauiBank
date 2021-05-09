@@ -120,6 +120,7 @@ def register():
     return render_template('register.html', error=error)
 
 
+
 @app.route('/hello', methods=['GET', 'POST'])
 def hello():
     # todo
