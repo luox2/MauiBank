@@ -1,3 +1,4 @@
+from flask_bootstrap import Bootstrap
 from flask import Flask, escape, request, render_template, session, redirect, url_for
 import sqlite3
 import hashlib
@@ -27,6 +28,30 @@ def valid_login(username, password):
     return completion
 
 
+def get_account_balance(username):
+    con = sqlite3.connect('database/bank.db')
+    with con:
+        cur = con.cursor()
+        print(username)
+        cur.execute("SELECT BALANCE FROM USER WHERE USERNAME = ?", (username,))
+        row = cur.fetchone()
+        print(row[0])
+        return row[0]
+
+
+def get_account_info(username):
+    con = sqlite3.connect('database/bank.db')
+    with con:
+        cur = con.cursor()
+        cur.execute("SELECT BALANCE FROM USER WHERE USERNAME = ?", username)
+        row = cur.fetchone()
+        return row[0]
+
+
+app.config['SECRET_KEY'] = 'maui bank'
+bootstrap = Bootstrap(app)
+
+
 def valid_register(username):
     con = sqlite3.connect('database/bank.db')
     with con:
@@ -45,13 +70,15 @@ def add_user(username, password, balance):
     with con:
         cur = con.cursor()
         md5_password = hashlib.md5(password.encode()).hexdigest()
-        cur.execute("INSERT INTO USER (USERNAME, PASSWORD, BALANCE) VALUES (?, ?, ?)", (username, md5_password, balance))
+        cur.execute("INSERT INTO USER (USERNAME, PASSWORD, BALANCE) VALUES (?, ?, ?)",
+                    (username, md5_password, balance))
         con.commit()
 
 
 # the home page
 @app.route('/')
 def home():
+    print(session.get('username'))
     return render_template('home.html', username=session.get('username'))
 
 
@@ -93,11 +120,25 @@ def register():
     return render_template('register.html', error=error)
 
 
-# method for test
-@app.route('/hello')
+
+@app.route('/hello', methods=['GET', 'POST'])
 def hello():
-    name = request.args.get("name", "World")
-    return f'Hello, {escape(name)}!'
+    # todo
+    # show account information
+    name = session.get('username')
+    balance = 0
+    if request.method == 'GET':
+        # query data from db
+        print(session)
+        balance = get_account_balance(name)
+
+        return render_template("account.html", username=name, balance=balance)
+
+    if request.method == 'POST':
+        print(request)
+        operation = request.form['operation']
+        print(operation)
+        return redirect("/hello")
 
 
 if __name__ == '__main__':
