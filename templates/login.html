@@ -10,5 +10,9 @@
         <label>password: <input type="password" name="password" value=""></label><br>
         <input type="submit" value="login">
     </form>
+
+    {% if error %}
+        <p>{{error}}</p>
+    {% endif %}
 </body>
 </html>

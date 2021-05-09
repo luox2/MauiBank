@@ -6,9 +6,9 @@ app = Flask(__name__)
 app.secret_key = '\xc9ixnRb\xe40\xd4\xa5\x7f\x03\xd0y6\x01\x1f\x96\xeao+\x8a\x9f\xe4'
 
 
-# TODO for MD5 CONVERSION
+# To check the password in database with input password after md5 conversion
 def check_password(hashed_password, user_password):
-    return hashed_password == user_password
+    return hashed_password == hashlib.md5(user_password.encode()).hexdigest()
 
 
 def valid_login(username, password):
@@ -44,7 +44,8 @@ def add_user(username, password, balance):
     con = sqlite3.connect('database/bank.db')
     with con:
         cur = con.cursor()
-        cur.execute("INSERT INTO USER (USERNAME, PASSWORD, BALANCE) VALUES (?, ?, ?)", (username, password, balance))
+        md5_password = hashlib.md5(password.encode()).hexdigest()
+        cur.execute("INSERT INTO USER (USERNAME, PASSWORD, BALANCE) VALUES (?, ?, ?)", (username, md5_password, balance))
         con.commit()
 
 
