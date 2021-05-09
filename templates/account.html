@@ -1,47 +1,35 @@
-{% extends 'base.html' %}
-{% block title %}Maui Bank{% endblock title %}
-{% block styles %}
-    {{ super() }}
-    <link href="{{ url_for('static', filename='login.css') }}" rel="stylesheet">
-{% endblock styles %}
-{% block navli %}
-    <ul class="nav navbar-nav navbar-right">
-        {% if session.is_login %}
-            <li><a href="/">Aloha！{{ session.name }}</a></li>
-            <li><a href="/logout">Exit</a><li>
-            {% else %}
-            <li><a href="/">Aloha!</a></li>
-            <li><a href="/login">Login</a></li>
-            <li><a href="/register">Register</a></li>
-        {% endif %}
-    </ul>
-{% endblock navli %}
-{% block content %}
-    <div class="container form-login">
-        {% for message in get_flashed_messages() %}
-            <div class="alert alert-warning">
-                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
     <form action="/account" method="post" class="form-login">
         <div class="form-group">
             <label for="id_username">Account</label>
-            <input type="text" class="form-control" name="username" id="id_username" placeholder="Maui" {% if username %}value="{{ username }}"{% endif %} autofocus required readonly="readonly">
+            <input type="text" class="form-control" name="username" id="id_username" placeholder="Maui" {% if username
+                   %}value="{{ username }}" {% endif %} autofocus required readonly="readonly">
         </div>
         <div class="form-group">
             <label for="id_balance">Balance</label>
-            <input type="text" class="form-control" name="balance" id="id_balance" placeholder="1000000" {% if username %}value="{{ username }}"{% endif %} autofocus required readonly="readonly">
+            <input type="text" class="form-control" name="balance" id="id_balance" placeholder="1000000" {% if username
+                   %}value="{{ username }}" {% endif %} autofocus required readonly="readonly">
         </div>
+        <form action="">
+            <select name="operation">
+                <option value="deposit">Deposit</option>
+                <option value="withdrawal">Withdrawal</option>
+            </select>
+        </form>
         <div class="form-group">
             <label for="id_amount">Amount</label>
             <input type="text" class="form-control" name="amount" id="id_amount" placeholder="Input amount" required>
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-primary pull-left">deposit</button>
-            <button type="submit" class="btn btn-primary pull-right">withdrawal</button>
+            <button type="submit" class="btn btn-primary pull-left">submit</button>
         </div>
     </form>
+</head>
+<body>
 
-{% endblock content %}
+</body>
+</html>
