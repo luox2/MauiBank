@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <form action="/account" method="post" class="form-login">
+    <form action="/account" method="post">
         <div class="form-group">
             <label for="id_username">Account</label>
             <input type="text" class="form-control" name="username" id="id_username" placeholder="Maui" {% if username
@@ -11,8 +11,8 @@
         </div>
         <div class="form-group">
             <label for="id_balance">Balance</label>
-            <input type="text" class="form-control" name="balance" id="id_balance" placeholder="1000000" {% if username
-                   %}value="{{ username }}" {% endif %} autofocus required readonly="readonly">
+            <input type="text" class="form-control" name="balance" id="id_balance" placeholder="1000000" {% if balance
+                   %}value="{{ balance }}" {% endif %} autofocus required readonly="readonly">
         </div>
         <form action="">
             <select name="operation">
