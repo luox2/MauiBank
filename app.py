@@ -31,6 +31,27 @@ app.config['SECRET_KEY'] = 'maui bank'
 bootstrap = Bootstrap(app)
 
 
+def valid_register(username):
+    con = sqlite3.connect('database/bank.db')
+    with con:
+        cur = con.cursor()
+        cur.execute("SELECT * FROM USER")
+        rows = cur.fetchall()
+        for row in rows:
+            db_user = row[0]
+            if db_user == username:
+                return False
+    return True
+
+
+def add_user(username, password, balance):
+    con = sqlite3.connect('database/bank.db')
+    with con:
+        cur = con.cursor()
+        cur.execute("INSERT INTO USER (USERNAME, PASSWORD, BALANCE) VALUES (?, ?, ?)", (username, password, balance))
+        con.commit()
+
+
 # the home page
 @app.route('/')
 def home():
@@ -38,7 +59,7 @@ def home():
     return render_template('home.html', username=session.get('username'))
 
 
-# the login page
+# login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     error = None
@@ -50,6 +71,31 @@ def login():
             error = 'wrong username or password'
 
     return render_template('login.html', error=error)
+
+
+# logout
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('home'))
+
+
+# register
+@app.route('/register', methods=['GET', 'POST', 'PUT'])
+def register():
+    error = None
+    if request.method == 'POST':
+        if request.form['password1'] != request.form['password2']:
+            error = 'the two passwords are not the same'
+        elif float(request.form['input_balance']) < 0.0:
+            error = 'the input balance cannot be negative'
+        elif valid_register(request.form['username']):
+            add_user(request.form['username'], request.form['password1'], request.form['input_balance'])
+            # TODO
+            return redirect(url_for('hello'))
+        else:
+            error = 'this username has been registered'
+    return render_template('register.html', error=error)
 
 
 @app.route('/hello')

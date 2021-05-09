@@ -6,9 +6,9 @@
 </head>
 <body>
     {% if username %}
-        <p>{{username}}, welcome to the home page! <a href="{{ url_for('panel') }}">User Profile</a> <a href="{{ url_for('logout') }}">logout</a> </p>
+        <p>{{username}}, welcome to the home page! <a href="{{ url_for('hello') }}">User Profile</a> <a href="{{ url_for('logout') }}">logout</a> </p>
     {% else %}
-        <p>welcome to the homepage! new user <a href="{{ url_for('hello') }}">hello</a></p>
+        <p>welcome to the homepage! new user <a href="{{ url_for('hello') }}">hello</a> <a href="{{ url_for('login') }}">login</a> <a href="{{ url_for('register') }}">register</a> </p>
     {% endif %}
 </body>
 </html>
