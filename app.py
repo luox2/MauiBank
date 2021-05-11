@@ -177,13 +177,15 @@ def hello():
         operation = request.form['operation']
         amount = request.form['amount']
         if int(amount) <= 0:
-            return render_template("account.html", error="The amount has to be larger than 0.")
+            balance = get_account_balance(name)
+            return render_template("account.html", username=name, balance=balance, error="The amount has to be larger than 0.")
         else:
             response = update_account_balance(name, operation, amount)
             if not response:
                 return redirect("/hello")
             else:
-                return render_template("account.html", error=response)
+                balance = get_account_balance(name)
+                return render_template("account.html", username=name, balance=balance, error=response)
 
 
 if __name__ == '__main__':
