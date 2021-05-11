@@ -6,12 +6,12 @@
     <form action="/hello" method="post">
         <div class="form-group">
             <label for="id_username">Account</label>
-            <input type="text" class="form-control" name="username" id="id_username" placeholder="Maui" {% if username
+            <input type="text" class="form-control" name="username" id="id_username" placeholder="Your username here" {% if username
                    %}value="{{ username }}" {% endif %} autofocus required readonly="readonly">
         </div>
         <div class="form-group">
             <label for="id_balance">Balance</label>
-            <input type="text" class="form-control" name="balance" id="id_balance" placeholder="1000000" {% if balance
+            <input type="text" class="form-control" name="balance" id="id_balance" placeholder="Your balance here" {% if balance
                    %}value="{{ balance }}" {% endif %} autofocus required readonly="readonly">
         </div>
         <form method="post" action="/hello">
@@ -30,6 +30,10 @@
             </div>
         </form>
     </form>
+
+    {% if error %}
+        <p>{{error}}</p>
+    {% endif %}
 </head>
 <body>
 
