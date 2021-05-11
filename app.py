@@ -29,13 +29,43 @@ def valid_login(username, password):
 
 def get_account_balance(username):
     con = sqlite3.connect('database/bank.db')
+    balance = 0
     with con:
         cur = con.cursor()
-        print(username)
         cur.execute("SELECT BALANCE FROM USER WHERE USERNAME = ?", (username,))
         row = cur.fetchone()
-        print(row[0])
-        return row[0]
+        balance = row[0]
+        cur.close()
+    con.close()
+    return balance
+
+
+def update_account_balance(username, operation, amount):
+    con = sqlite3.connect('database/bank.db')
+    response = ""
+    with con:
+        cur = con.cursor()
+        cur.execute("SELECT BALANCE FROM USER WHERE USERNAME = ?", (username,))
+        balance = cur.fetchone()[0]
+        print("1", balance)
+        if operation == 'withdrawal':
+            balance -= int(amount)
+        elif operation == 'deposit':
+            balance += int(amount)
+        if balance < 0:
+
+            response = "Failed to process your request, please check the amount you entered and retry later."
+        else:
+            try:
+                cur.execute("UPDATE USER SET BALANCE = ? WHERE USERNAME = ?", (balance, username))
+                con.commit()
+            except Exception as e:
+                print(e)
+                con.rollback()
+                response = "Failed to process your request, please retry later."
+        cur.close()
+    con.close()
+    return response
 
 
 def get_account_info(username):
@@ -118,7 +148,6 @@ def register():
     return render_template('register.html', error=error)
 
 
-
 @app.route('/hello', methods=['GET', 'POST'])
 def hello():
     # todo
@@ -133,10 +162,16 @@ def hello():
         return render_template("account.html", username=name, balance=balance)
 
     if request.method == 'POST':
-        print(request)
         operation = request.form['operation']
-        print(operation)
-        return redirect("/hello")
+        amount = request.form['amount']
+        if int(amount) <= 0:
+            return render_template("account.html", error="The amount has to be larger than 0.")
+        else:
+            response = update_account_balance(name, operation, amount)
+            if not response:
+                return redirect("/hello")
+            else:
+                return render_template("account.html", error=response)
 
 
 if __name__ == '__main__':
