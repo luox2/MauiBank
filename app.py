@@ -14,19 +14,27 @@ def check_password(hashed_password, user_password):
 def valid_login(username, password):
     con = sqlite3.connect('database/bank.db')
     completion = False
+    result_user_name = ""
     with con:
         cur = con.cursor()
-        cur.execute("SELECT * FROM USER")
-        rows = cur.fetchall()
-        for row in rows:
-            db_user = row[0]
-            db_pass = row[1]
-            # TODO SQL INJECTION
-            if db_user == username:
-                completion = check_password(db_pass, password)
+        # without SQL injection
+        # cur.execute("SELECT * FROM USER")
+        # rows = cur.fetchall()
+        # for row in rows:
+        #     db_user = row[0]
+        #     db_pass = row[1]
+        #     if db_user == username:
+        #         completion = check_password(db_pass, password)
+        # with SQL injection
+        sql = "SELECT * FROM USER WHERE USERNAME = '" + username + "' AND PASSWORD = '" + hashlib.md5(password.encode()).hexdigest()+"'"
+        cur.execute(sql)
+        row = cur.fetchone()
+        if row:
+            result_user_name = row[0]
+            completion = True
         cur.close()
     con.close()
-    return completion
+    return completion, result_user_name
 
 
 # judge whether a String is a number
@@ -143,8 +151,9 @@ def home():
 def login():
     error = None
     if request.method == 'POST':
-        if valid_login(request.form['username'], request.form['password']):
-            session['username'] = request.form.get('username')
+        if valid_login(request.form['username'], request.form['password'])[0]:
+            # SQL injection
+            session['username'] = valid_login(request.form['username'], request.form['password'])[1]
             return redirect(url_for('hello'))
         else:
             error = 'wrong username or password'
