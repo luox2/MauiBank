@@ -10,7 +10,7 @@ A simple Flask demo application showing vulnerabilities in Software Security.
 * Flask 0.12.2
 
 #### Clone this repository
-* git clone https://github.com/luox2/BankPy
+* git clone https://github.com/luox2/MauiBank
 * cd MauiBank
 
 #### Run the script
