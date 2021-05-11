@@ -13,7 +13,7 @@ git clone https://github.com/luox2/BankPy
 python version: 3.6+
 
 ```
-for MacOS and Linux:
+For MacOS and Linux:
 chmod u+x run.sh
-./start.sh
+./run.sh
 ```
