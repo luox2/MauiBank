@@ -24,6 +24,8 @@ def valid_login(username, password):
             # TODO SQL INJECTION
             if db_user == username:
                 completion = check_password(db_pass, password)
+        cur.close()
+    con.close()
     return completion
 
 
@@ -89,7 +91,11 @@ def valid_register(username):
         for row in rows:
             db_user = row[0]
             if db_user == username:
+                cur.close()
+                con.close()
                 return False
+        cur.close()
+    con.close()
     return True
 
 
@@ -98,9 +104,15 @@ def add_user(username, password, balance):
     with con:
         cur = con.cursor()
         md5_password = hashlib.md5(password.encode()).hexdigest()
-        cur.execute("INSERT INTO USER (USERNAME, PASSWORD, BALANCE) VALUES (?, ?, ?)",
-                    (username, md5_password, balance))
-        con.commit()
+        try:
+            cur.execute("INSERT INTO USER (USERNAME, PASSWORD, BALANCE) VALUES (?, ?, ?)",
+                        (username, md5_password, balance))
+            con.commit()
+        except Exception as e:
+            print(e)
+            con.rollback()
+        cur.close()
+    con.close()
 
 
 # the home page
