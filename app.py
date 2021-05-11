@@ -29,6 +29,22 @@ def valid_login(username, password):
     return completion
 
 
+# judge whether a String is a number
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        pass
+    # try:
+    #     import unicodedata
+    #     unicodedata.numeric(s)
+    #     return True
+    # except (TypeError, ValueError):
+    #     pass
+    return False
+
+
 def get_account_balance(username):
     con = sqlite3.connect('database/bank.db')
     balance = 0
@@ -176,15 +192,16 @@ def hello():
     if request.method == 'POST':
         operation = request.form['operation']
         amount = request.form['amount']
-        if int(amount) <= 0:
-            balance = get_account_balance(name)
+        balance = get_account_balance(name)
+        if not is_number(amount):
+            return render_template("account.html", username=name, balance=balance, error="The amount must be a number.")
+        elif float(amount) <= 0.0:
             return render_template("account.html", username=name, balance=balance, error="The amount has to be larger than 0.")
         else:
             response = update_account_balance(name, operation, amount)
             if not response:
                 return redirect("/hello")
             else:
-                balance = get_account_balance(name)
                 return render_template("account.html", username=name, balance=balance, error=response)
 
 
