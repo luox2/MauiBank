@@ -55,7 +55,7 @@ def is_number(s):
 
 def get_account_balance(username):
     con = sqlite3.connect('database/bank.db')
-    balance = 0
+    # balance = 0
     with con:
         cur = con.cursor()
         cur.execute("SELECT BALANCE FROM USER WHERE USERNAME = ?", (username,))
@@ -73,7 +73,7 @@ def update_account_balance(username, operation, amount):
         cur = con.cursor()
         cur.execute("SELECT BALANCE FROM USER WHERE USERNAME = ?", (username,))
         balance = cur.fetchone()[0]
-        print("1", balance)
+        # print("1", balance)
         if operation == 'withdrawal':
             balance -= int(amount)
         elif operation == 'deposit':
@@ -193,7 +193,7 @@ def hello():
     balance = 0
     if request.method == 'GET':
         # query data from db
-        print(session)
+        # print(session)
         balance = get_account_balance(name)
 
         return render_template("account.html", username=name, balance=balance)
