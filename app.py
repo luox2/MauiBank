@@ -1,15 +1,11 @@
 from flask import Flask, request, render_template, session, redirect, url_for
 import sqlite3
 import hashlib
+import random
+import string
 
 app = Flask(__name__)
 app.secret_key = '\xc9ixnRb\xe40\xd4\xa5\x7f\x03\xd0y6\x01\x1f\x96\xeao+\x8a\x9f\xe4'
-
-
-# To check the password in database with input password after md5 conversion
-def check_password(hashed_password, user_password):
-    return hashed_password == hashlib.md5(user_password.encode()).hexdigest()
-
 
 def valid_login(username, password):
     con = sqlite3.connect('database/bank.db')
@@ -23,8 +19,9 @@ def valid_login(username, password):
         for row in rows:
             db_user = row[0]
             db_pass = row[1]
+            db_salt = row[2]
             if db_user == username:
-                completion = check_password(db_pass, password)
+                completion = db_pass == hashlib.md5((password+db_salt).encode()).hexdigest()
                 result_user_name = row[0]
         # with SQL injection
         # sql = "SELECT * FROM USER WHERE USERNAME = '" + username + "' AND PASSWORD = '" + \
@@ -129,16 +126,23 @@ def add_user(username, password, balance):
     con = sqlite3.connect('database/bank.db')
     with con:
         cur = con.cursor()
-        md5_password = hashlib.md5(password.encode()).hexdigest()
+        salt = generate_rand_str()
+        md5_password = hashlib.md5((password+salt).encode()).hexdigest()
         try:
-            cur.execute("INSERT INTO USER (USERNAME, PASSWORD, BALANCE) VALUES (?, ?, ?)",
-                        (username, md5_password, balance))
+            cur.execute("INSERT INTO USER (USERNAME, PASSWORD, SALT, BALANCE) VALUES (?, ?, ?, ?)",
+                        (username, md5_password, salt, balance))
             con.commit()
         except Exception as e:
             print(e)
             con.rollback()
         cur.close()
     con.close()
+
+
+def generate_rand_str(random_length=6):
+    rand_list = [random.choice(string.digits + string.ascii_letters) for i in range(random_length)]
+    rand_str = ''.join(rand_list)
+    return rand_str
 
 
 # the home page
@@ -207,7 +211,8 @@ def hello():
         if not is_number(amount):
             return render_template("account.html", username=name, balance=balance, error="The amount must be a number.")
         elif float(amount) <= 0.0:
-            return render_template("account.html", username=name, balance=balance, error="The amount has to be larger than 0.")
+            return render_template("account.html", username=name, balance=balance,
+                                   error="The amount has to be larger than 0.")
         else:
             response = update_account_balance(name, operation, amount)
             if not response:
