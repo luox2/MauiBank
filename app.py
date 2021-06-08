@@ -38,6 +38,8 @@ def valid_login(username, password):
 
 # judge whether a String is a number
 def is_number(s):
+    if str(s) == 'nan':
+        return False
     try:
         float(s)
         return True
