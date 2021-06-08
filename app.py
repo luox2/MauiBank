@@ -107,7 +107,26 @@ def get_account_info(username):
 app.config['SECRET_KEY'] = 'maui bank'
 
 
-def valid_register(username):
+def valid_register(username, password):
+    # verify the validation of the password
+    contain_low = False
+    contain_cap = False
+    contain_num = False
+    length = 0
+    password
+    for c in password:
+        length += 1
+        if c.islower():
+            contain_low = True
+        elif c.isupper():
+            contain_cap = True
+        elif c.isdigit():
+            contain_num = True
+
+    if not (contain_low and contain_cap and contain_num):
+        return 1
+    elif length < 8:
+        return 2
     con = sqlite3.connect('database/bank.db')
     with con:
         cur = con.cursor()
@@ -118,10 +137,10 @@ def valid_register(username):
             if db_user == username:
                 cur.close()
                 con.close()
-                return False
+                return 3
         cur.close()
     con.close()
-    return True
+    return 0
 
 
 def add_user(username, password, balance):
@@ -185,11 +204,17 @@ def register():
             error = 'the two passwords are not the same'
         elif request.form['input_balance'] == '' or float(request.form['input_balance']) < 0.0:
             error = 'the input balance cannot be negative or null'
-        elif valid_register(request.form['username']):
-            add_user(request.form['username'], request.form['password1'], request.form['input_balance'])
-            return redirect(url_for('login'))
         else:
-            error = 'this username has been registered'
+            error_code = valid_register(request.form['username'], request.form['password1'])
+            if error_code == 0:
+                add_user(request.form['username'], request.form['password1'], request.form['input_balance'])
+                return redirect(url_for('login'))
+            elif error_code == 1:
+                error = 'the password is too simple, set again'
+            elif error_code == 2:
+                error = 'the password is too short, set again'
+            elif error_code == 3:
+                error = 'this username has been registered'
     return render_template('register.html', error=error)
 
 
