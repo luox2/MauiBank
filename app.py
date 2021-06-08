@@ -112,8 +112,10 @@ def valid_register(username, password):
     contain_low = False
     contain_cap = False
     contain_num = False
+    length = 0
     password
     for c in password:
+        length += 1
         if c.islower():
             contain_low = True
         elif c.isupper():
@@ -123,6 +125,8 @@ def valid_register(username, password):
 
     if not (contain_low and contain_cap and contain_num):
         return 1
+    elif length < 8:
+        return 2
     con = sqlite3.connect('database/bank.db')
     with con:
         cur = con.cursor()
@@ -133,7 +137,7 @@ def valid_register(username, password):
             if db_user == username:
                 cur.close()
                 con.close()
-                return 2
+                return 3
         cur.close()
     con.close()
     return 0
@@ -208,6 +212,8 @@ def register():
             elif error_code == 1:
                 error = 'the password is too simple, set again'
             elif error_code == 2:
+                error = 'the password is too short, set again'
+            elif error_code == 3:
                 error = 'this username has been registered'
     return render_template('register.html', error=error)
 
