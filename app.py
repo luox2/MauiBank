@@ -18,20 +18,22 @@ def valid_login(username, password):
     with con:
         cur = con.cursor()
         # without SQL injection
-        # cur.execute("SELECT * FROM USER")
-        # rows = cur.fetchall()
-        # for row in rows:
-        #     db_user = row[0]
-        #     db_pass = row[1]
-        #     if db_user == username:
-        #         completion = check_password(db_pass, password)
+        cur.execute("SELECT * FROM USER")
+        rows = cur.fetchall()
+        for row in rows:
+            db_user = row[0]
+            db_pass = row[1]
+            if db_user == username:
+                completion = check_password(db_pass, password)
+                result_user_name = row[0]
         # with SQL injection
-        sql = "SELECT * FROM USER WHERE USERNAME = '" + username + "' AND PASSWORD = '" + hashlib.md5(password.encode()).hexdigest()+"'"
-        cur.execute(sql)
-        row = cur.fetchone()
-        if row:
-            result_user_name = row[0]
-            completion = True
+        # sql = "SELECT * FROM USER WHERE USERNAME = '" + username + "' AND PASSWORD = '" + \
+        #       hashlib.md5(password.encode()).hexdigest()+"'"
+        # cur.execute(sql)
+        # row = cur.fetchone()
+        # if row:
+        #     result_user_name = row[0]
+        #     completion = True
         cur.close()
     con.close()
     return completion, result_user_name
