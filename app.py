@@ -41,7 +41,7 @@ def is_number(s):
     if str(s) == 'nan':
         return False
     try:
-        float(s)
+        num = float(s)
         return True
     except ValueError:
         pass
@@ -202,8 +202,8 @@ def register():
     if request.method == 'POST':
         if request.form['password1'] != request.form['password2']:
             error = 'the two passwords are not the same'
-        elif request.form['input_balance'] == '' or float(request.form['input_balance']) < 0.0:
-            error = 'the input balance cannot be negative or null'
+        elif request.form['input_balance'] == '' or float(request.form['input_balance']) < 0.0 or float(request.form['input_balance']) > 4294967295.99:
+            error = 'the input balance is illegal'
         else:
             error_code = valid_register(request.form['username'], request.form['password1'])
             if error_code == 0:
