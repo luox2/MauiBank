@@ -26,7 +26,8 @@ def valid_login(username, password):
         #     if db_user == username:
         #         completion = check_password(db_pass, password)
         # with SQL injection
-        sql = "SELECT * FROM USER WHERE USERNAME = '" + username + "' AND PASSWORD = '" + hashlib.md5(password.encode()).hexdigest()+"'"
+        sql = "SELECT * FROM USER WHERE USERNAME = '" + username + "' AND PASSWORD = '" + \
+              hashlib.md5(password.encode()).hexdigest()+"'"
         cur.execute(sql)
         row = cur.fetchone()
         if row:
