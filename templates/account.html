@@ -26,7 +26,7 @@
             <input type="text" class="form-control" name="amount" id="id_amount" placeholder="Input amount" required>
             </div>
             <div class="form-group">
-                <button type="submit" class="btn btn-primary pull-left">submit</button>
+                <button type="submit" onclick="IsFormChanged()" class="btn btn-primary pull-left">submit</button>
             </div>
         </form>
     </form>
@@ -39,3 +39,24 @@
 
 </body>
 </html>
+
+<!--use codes from https://blog.csdn.net/wuhen8/article/details/7056390-->
+<script type="text/javascript">
+    function IsFormChanged(){
+        var isChanged = false;
+        var form = document.forms[0];
+        for(var i = 0; i < form.elements.length; i++){
+            var type = form.elements[i].type;
+            if(type == "select-one"){
+                for (var j = 0; j < element.options.length; j++) {
+                    if (element.options[j].selected != element.options[j].defaultSelected) {
+                        isChanged = true;
+                        break;
+                    }
+                }
+            }
+        }
+        alert(isChanged?"You have changed the form.":"Submit successfully");
+        return isChanged;
+    }
+</script>
