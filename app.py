@@ -38,6 +38,8 @@ def valid_login(username, password):
 
 # judge whether a String is a number
 def is_number(s):
+    if str(s) == 'nan':
+        return False
     try:
         float(s)
         return True
@@ -74,9 +76,9 @@ def update_account_balance(username, operation, amount):
         balance = cur.fetchone()[0]
         # print("1", balance)
         if operation == 'withdrawal':
-            balance -= int(amount)
+            balance -= float(amount)
         elif operation == 'deposit':
-            balance += int(amount)
+            balance += float(amount)
         if balance < 0:
 
             response = "Failed to process your request, please check the amount you entered and retry later."
